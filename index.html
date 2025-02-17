@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <style>
+      body {
+        background-color: black;
+        color: #fff;
+      }
+      input {
+        font-size: 20px;
+        height: 35px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        padding-left: 10px;
+        margin-top: -55px;
+      }
+      img {
+        width: 25px;
+        height: 25px;
+        border: none;
+      }
+      button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 6px;
+      }
+      button:hover {
+        background-color: rgb(251, 99, 33);
+      }
+      .back {
+        width: 400px;
+        display: flex;
+        height: 120px;
+        justify-content: center;
+        align-items: center;
+        margin: 100px auto;
+        background-color: aquamarine;
+        padding-bottom: 40px;
+        border-radius: 10px;
+      }
+      h2 {
+        font-size: 29px;
+        font-weight: 900;
+        color: yellow;
+        margin-top: 40px;
+      }
+      .sun {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        
+      }
+      .sun h2{
+        font-size: 10px;
+      }
+      #img-sun{
+        height: 200px;
+        width: 300px;
+        border-radius: 50%;
+      }
+      .sun img {
+        height: 250px;
+        width: 250px;
+        
+        margin-top: 1px;
+       
+        
+      }
+      #deg {
+        font-size: 50px;
+        margin-top: -50px;
+        font-weight: 900;
+      }
+      #city {
+        font-size: 35px;
+        margin-top: -30px;
+        font-weight: 900;
+      }
+      .w2 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .w2 img {
+        height: 80px;
+        width: 90px;
+        font-weight: 900;
+      }
+      h6 {
+        font-size: 22px;
+        margin-top: -16px;
+        color: black;
+        font-weight: 900;
+      }
+      .th {
+        font-size: 25px;
+        margin-top: -50px;
+        font-weight: 900;
+      }
+      #weatherStatus{
+        display: none;
+      }
+      #invalid{
+         color: red;
+         display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="back">
+      <div class="mail">
+        <center><h2>Weather App</h2></center>
+        <div class="card">
+          <input type="text" id="search" placeholder="Enter city name" />
+          <button id="btn"><img src="search.png" alt="search" /></button>
+        </div>
+        <p id="invalid">Invalid city name!</p>
+        <div id="weatherStatus">
+        <div class="sun" id="weather">
+          <img src="day.svg" alt="Fully day" id="img-sun" />
+          <h2 id="deg">57°C</h2>
+          <h2 id="city">Delhi</h2>
+        </div>
+        <div class="w2">
+          <div id="humidity" class="a">
+            <img src="humidity.png" alt="Humidity" id="h" /><br />
+            <h6 id="hd">57%</h6>
+            <h6 id="ht" class="th">Humidity</h6>
+          </div>
+          <div id="wind" class="a">
+            <img src="mist.png" alt="Wind" id="w" /><br />
+            <h6 id="ws">57km/h</h6>
+            <h6 id="wt" class="th">Wind</h6>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var url = `https://api.openweathermap.org/data/2.5/weather?&units=metric&q=`;
+
+      var apikey = "de83f1717484ca8ccad87d63315db6a6";
+      const deg = document.getElementById("deg");
+      const city = document.getElementById("city");
+
+      const hd = document.getElementById("hd");
+      //const ht=document.getElementById("ht")
+
+      const ws = document.getElementById("ws");
+      //const wt=document.getElementById("wt")
+
+      var input = document.getElementById("search");
+      var btn = document.getElementById("btn");
+      var image = document.querySelector("#img-sun");
+      //console.log(image)
+      var weatherStatus=document.getElementById("weatherStatus")
+      var back=document.querySelector(".back")
+      var invalid=document.getElementById("invalid")
+
+      async function checkWeather(cityy) {
+        let responce = await fetch(url + cityy + `&appid=${apikey}`);
+        let data = await responce.json();
+        console.log(data);
+        if(data.cod=='404'){
+            invalid.style="display:block"
+            weatherStatus.style="display:none"
+            back.style="height:150px"
+        }
+        else{
+        deg.innerHTML = `${Math.round(data.main.temp)}°C`;
+        city.innerHTML = data.name;
+        hd.innerHTML = `${Math.round(data.main.humidity)}%`;
+        ws.innerHTML = `${data.wind.speed} km/h`;
+        invalid.style="display:none"
+        if (data.weather[0].main == "Clouds") {
+          image.src = "days.svg";
+        } else if (data.weather[0].main == "Rain") {
+            image.src = "Rain.svg";
+        }
+        else if (data.weather[0].main == "Clear") {
+            image.src = "day.svg";
+        }
+        else if (data.weather[0].main == "Thunder") {
+            image.src = "thunder.svg";
+        }
+         back.style="height:600px;transition:height 3s"
+         weatherStatus.style="display:block"
+      }
+    }
+      btn.addEventListener("click", () => {
+        checkWeather(input.value);
+      });
+    </script>
+  </body>
+</html>
